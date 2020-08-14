@@ -666,11 +666,11 @@ const validators = {
     example: "https://example.org/twilio-message-report",
     default: undefined
   }),
-  TWILIO_SQS_QUEUE_URL: url({
-    desc:
-      "AWS SQS URL to handle incoming messages when app isn't connected to Twilio.",
-    default: undefined
-  }),
+  // TWILIO_SQS_QUEUE_URL: url({
+  //   desc:
+  //     "AWS SQS URL to handle incoming messages when app isn't connected to Twilio.",
+  //   default: undefined
+  // }),
   TWILIO_MESSAGE_VALIDITY_PERIOD: num({
     desc: "An optional maximum validity period for queued Twilio messages.",
     default: undefined
