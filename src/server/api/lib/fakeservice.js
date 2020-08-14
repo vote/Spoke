@@ -1,12 +1,13 @@
-import { getLastMessage } from "./message-sending";
+import { getLastMessage, saveNewIncomingMessage } from './message-sending'
 import { r } from "../../models";
 
 // This 'fakeservice' allows for fake-sending messages
 // that end up just in the db appropriately and then using sendReply() graphql
 // queries for the reception (rather than a real service)
+const simulatedReplyRatio = Number(process.env.SIMULATED_REPLY_RATIO || 0.5);
 
 async function sendMessage(message, _organizationId, _trx) {
-  return await r
+  await r
     .knex("message")
     .update({
       send_status: "SENT",
@@ -14,6 +15,18 @@ async function sendMessage(message, _organizationId, _trx) {
       sent_at: r.knex.fn.now()
     })
     .where({ id: message.id });
+
+  if (Math.random() < simulatedReplyRatio) {
+    const reply = {
+      ...message,
+      id: undefined,
+      service_id: `fakereply${Math.random()}`,
+      text: `[Auto Reply]: ${message.text}`,
+      is_from_contact: true,
+      send_status: "DELIVERED"
+    };
+    setTimeout(() => saveNewIncomingMessage(reply), 200);
+  }
 }
 
 // None of the rest of this is even used for fake-service
