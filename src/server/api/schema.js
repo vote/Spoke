@@ -1284,11 +1284,6 @@ const rootMutations = {
         .where({ id })
         .returning("*");
 
-      await sendUserNotification({
-        type: Notifications.CAMPAIGN_STARTED,
-        campaignId: id
-      });
-
       return campaign;
     },
 
