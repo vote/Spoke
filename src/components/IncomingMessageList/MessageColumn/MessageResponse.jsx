@@ -11,11 +11,15 @@ import { loadData } from "../../../containers/hoc/with-operations";
 import GSForm from "../../forms/GSForm";
 import SendButton from "../../SendButton";
 
+// TODO: share the two click functionality with AssignmentTexterContact
+const clickStepLabels = ["Confirm?", "Send"]
+
 class MessageResponse extends Component {
   state = {
     messageText: "",
     isSending: false,
-    sendError: ""
+    sendError: "",
+    clickStepIndex: 0
   };
 
   createMessageToContact(text) {
@@ -39,7 +43,7 @@ class MessageResponse extends Component {
     }
     this.setState({ isSending: true });
 
-    const finalState = { isSending: false };
+    const finalState = { isSending: false, clickStepIndex: 0 };
     try {
       const response = await this.props.mutations.sendMessage(
         message,
@@ -57,7 +61,17 @@ class MessageResponse extends Component {
 
   handleCloseErrorDialog = () => this.setState({ sendError: "" });
 
-  handleClickSendMessageButton = () => this.refs.messageForm.submit();
+  handleClickSendMessageButton = () => {
+    const { clickStepIndex } = this.state;
+
+    if (clickStepIndex < clickStepLabels.length - 1) {
+      this.setState({
+        clickStepIndex: clickStepIndex + 1
+      });
+    } else {
+      this.refs.messageForm.submit();
+    }
+  }
 
   render() {
     const messageSchema = yup.object({
@@ -98,7 +112,7 @@ class MessageResponse extends Component {
               style={{ flexGrow: "1" }}
             />
             <SendButton
-              threeClickEnabled={false}
+              label={clickStepLabels[this.state.clickStepIndex]}
               onFinalTouchTap={this.handleClickSendMessageButton}
               disabled={isSendDisabled}
               style={{ flexShrink: "1" }}
