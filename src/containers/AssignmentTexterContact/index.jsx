@@ -17,6 +17,8 @@ import Snackbar from "material-ui/Snackbar";
 import { grey100, blueGrey100 } from "material-ui/styles/colors";
 import CreateIcon from "material-ui/svg-icons/content/create";
 import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
+import LockOpenIcon from "material-ui/svg-icons/action/lock-open";
+import LockIcon from "material-ui/svg-icons/action/lock";
 import LocalOfferIcon from "material-ui/svg-icons/maps/local-offer";
 
 import { isContactNowWithinCampaignHours } from "../../lib/timezones";
@@ -161,7 +163,8 @@ export class AssignmentTexterContact extends React.Component {
           ? availableSteps[availableSteps.length - 1]
           : null,
       isTagEditorOpen: false,
-      clickStepIndex: 0
+      clickStepIndex: 0,
+      initialMessageLocked: true
     };
   }
 
@@ -552,10 +555,12 @@ export class AssignmentTexterContact extends React.Component {
 
   handleMessageFormChange = ({ messageText }) => {
     const { messageStatus } = this.props.contact;
+    const { initialMessageLocked } = this.state;
     // Do not allow deviating from the script for the first message of a campaign
-    if (messageStatus !== "needsMessage") {
-      this.setState({ messageText });
+    if (messageStatus === "needsMessage" && initialMessageLocked) {
+      return;
     }
+    this.setState({ messageText });
   };
 
   renderSurveySection() {
@@ -598,6 +603,9 @@ export class AssignmentTexterContact extends React.Component {
 
     return button;
   }
+
+  toggleInitialMessageLock = () =>
+    this.setState({ initialMessageLocked: !this.state.initialMessageLocked});
 
   renderActionToolbar() {
     const {
@@ -642,6 +650,13 @@ export class AssignmentTexterContact extends React.Component {
               <div style={{ float: "right", marginLeft: 20 }}>
                 {navigationToolbarChildren}
               </div>
+            </ToolbarGroup>
+            <ToolbarGroup>
+              <IconButton onClick={this.toggleInitialMessageLock}>
+                {this.state.initialMessageLocked ?
+                  <LockIcon color="lightGrey"/> :
+                  <LockOpenIcon color="lightGrey"/>}
+              </IconButton>
             </ToolbarGroup>
           </Toolbar>
         </div>
