@@ -13,21 +13,19 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+const clickStepLabels = ["Confirm?", "Send message"]
+
 class SendButton extends Component {
   state = {
     clickStepIndex: 0
   };
 
-  clickStepLabels = () =>
-    this.props.threeClickEnabled
-      ? ["Recipient ok?", "Message ok?", "Send message"]
-      : ["Send"];
-
   handleTouchTap = () => {
     const { clickStepIndex } = this.state;
     const { onFinalTouchTap } = this.props;
 
-    if (clickStepIndex < this.clickStepLabels().length - 1) {
+    if (clickStepIndex < clickStepLabels.length - 1) {
       this.setState({
         clickStepIndex: clickStepIndex + 1
       });
@@ -43,7 +41,7 @@ class SendButton extends Component {
           {...dataTest("send")}
           onTouchTap={this.handleTouchTap}
           disabled={this.props.disabled}
-          label={this.clickStepLabels()[this.state.clickStepIndex]}
+          label={clickStepLabels[this.state.clickStepIndex]}
           primary
         />
       </div>
