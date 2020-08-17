@@ -104,6 +104,8 @@ const inlineStyles = {
   }
 };
 
+const clickStepLabels = ["Confirm?", "Send message"]
+
 export class AssignmentTexterContact extends React.Component {
   constructor(props) {
     super(props);
@@ -158,7 +160,8 @@ export class AssignmentTexterContact extends React.Component {
         availableSteps.length > 0
           ? availableSteps[availableSteps.length - 1]
           : null,
-      isTagEditorOpen: false
+      isTagEditorOpen: false,
+      clickStepIndex: 0
     };
   }
 
@@ -512,11 +515,19 @@ export class AssignmentTexterContact extends React.Component {
   };
 
   handleClickSendMessageButton = () => {
-    this.refs.form.submit();
-    if (this.props.contact.messageStatus === "needsMessage") {
-      this.setState({ justSentNew: true });
+    const { clickStepIndex } = this.state;
+
+    if (clickStepIndex < clickStepLabels.length - 1) {
+      this.setState({
+        clickStepIndex: clickStepIndex + 1
+      });
+    } else {
+      this.refs.form.submit();
+      if (this.props.contact.messageStatus === "needsMessage") {
+        this.setState({ justSentNew: true });
+      }
     }
-  };
+  }
 
   optOutSchema = yup.object({
     optOutMessageText: yup.string()
@@ -610,7 +621,7 @@ export class AssignmentTexterContact extends React.Component {
           <Toolbar style={inlineStyles.actionToolbarFirst}>
             <ToolbarGroup firstChild>
               <SendButton
-                threeClickEnabled={campaign.organization.threeClickEnabled}
+                label={clickStepLabels[this.state.clickStepIndex]}
                 onFinalTouchTap={
                   alreadySent ? undefined : this.handleClickSendMessageButton
                 }
@@ -689,7 +700,7 @@ export class AssignmentTexterContact extends React.Component {
           <Toolbar style={inlineStyles.actionToolbarFirst}>
             <ToolbarGroup firstChild>
               <SendButton
-                threeClickEnabled={campaign.organization.threeClickEnabled}
+                label={clickStepLabels[this.state.clickStepIndex]}
                 onFinalTouchTap={this.handleClickSendMessageButton}
                 disabled={this.state.disabled}
               />
@@ -742,21 +753,6 @@ export class AssignmentTexterContact extends React.Component {
     );
   }
 
-  renderCorrectSendButton() {
-    const { messageStatus } = this.props.contact;
-    const validStates = ["messaged", "convo", "needsResponse"];
-    if (validStates.indexOf(messageStatus) > -1) {
-      return (
-        <SendButtonArrow
-          onClick={this.handleClickSendMessageButton}
-          onFinalTouchTap={this.handleClickSendMessageButton}
-          disabled={this.state.disabled}
-        />
-      );
-    }
-    return null;
-  }
-
   renderBottomFixedSection() {
     const { contact, tags } = this.props;
     const {
@@ -783,7 +779,6 @@ export class AssignmentTexterContact extends React.Component {
                 onChange={this.handleMessageFormChange}
               >
                 <MessageTextField />
-                {this.renderCorrectSendButton()}
               </GSForm>
             </div>
             {this.renderActionToolbar()}
