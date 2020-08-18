@@ -123,4 +123,6 @@ uploading or exporting) that may exceed Lambda's limits.
 
 # License
 
-See [LICENSE](./LICENSE).
+This repo is licensed under the GPL. In addition, any commits made by `benweissmann`, `matteosb`, or `nickcatal` are additionally licensed under the MIT license.
+
+See [LICENSE](./LICENSE) for the GPL, which applies to this whole repository, and [LICENSE.mit](./LICENSE.mit) for the license that applies to commits by `benweissmann`, `matteosb`, or `nickcatal`.
