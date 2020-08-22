@@ -1,6 +1,9 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import Card from "material-ui/Card"
+import CardActions from "material-ui/Card/CardActions"
+import CardText from "material-ui/Card/CardText"
 import Paper from "material-ui/Paper";
 import Chip from "material-ui/Chip";
 import RaisedButton from "material-ui/RaisedButton";
@@ -25,7 +28,8 @@ const styles = {
     color: "#000000"
   },
   description: {
-    maxWidth: "200px"
+    maxWidth: "200px",
+    wordWrap: "break-word"
   }
 };
 
@@ -33,26 +37,40 @@ class TagEditorList extends Component {
   createHandleEditTag = tagId => () => this.props.oEditTag(tagId);
   createHandleDeleteTag = tagId => () => this.props.onDeleteTag(tagId);
 
+  truncateText = (text, maxLen) => {
+    if (text.length < maxLen) {
+      return text
+    }
+    return text.substring(0, maxLen) + "..."
+  }
+
   render() {
     const { tags } = this.props;
 
     return (
       <div style={styles.wrapper}>
         {tags.map(tag => (
-          <Paper key={tag.id} style={styles.card}>
-            <div style={{ display: "flex" }}>
-              <Chip backgroundColor={"#DDEEEE"} style={styles.chip}>
-                {tag.title}
-              </Chip>
-            </div>
-            {tag.description && (
-              <p style={styles.description}>{tag.description}</p>
-            )}
-            <p>
-              Assignable?{" "}
-              {tag.isAssignable ? <CheckCircleIcon /> : <BlockIcon />}
-            </p>
-            <div style={{ display: "flex" }}>
+          <Card key={tag.id} style={styles.card}>
+            <CardText>
+              <div style={{ display: "flex" }}>
+                <Chip backgroundColor={"#DDEEEE"} style={styles.chip}>
+                  {tag.title}
+                </Chip>
+              </div>
+              {tag.description && (
+                <p style={styles.description}>{tag.description}</p>
+              )}
+              <p>
+                Assignable?{" "}
+                {tag.isAssignable ? <CheckCircleIcon /> : <BlockIcon />}
+              </p>
+              <p style={styles.description}>
+                {tag.onApplyScript && this.truncateText(tag.onApplyScript, 100)}
+              </p>
+              {tag.isSystem && <p>System tags cannot be edited</p>}
+
+            </CardText>
+            <CardActions>
               <RaisedButton
                 label="Edit"
                 labelPosition="before"
@@ -73,9 +91,9 @@ class TagEditorList extends Component {
                 }
                 onClick={this.createHandleDeleteTag(tag.id)}
               />
-            </div>
-            {tag.isSystem && <p>System tags cannot be edited</p>}
-          </Paper>
+            </CardActions>
+
+          </Card>
         ))}
       </div>
     );
