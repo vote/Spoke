@@ -2849,7 +2849,8 @@ const rootMutations = {
           .update({
             title: tag.title,
             description: tag.description,
-            is_assignable: tag.isAssignable
+            is_assignable: tag.isAssignable,
+            on_apply_script: tag.onApplyScript
           })
           .where({
             id: tag.id,
@@ -2869,7 +2870,8 @@ const rootMutations = {
           author_id: user.id,
           title: tag.title,
           description: tag.description,
-          is_assignable: tag.isAssignable
+          is_assignable: tag.isAssignable,
+          on_apply_script: tag.onApplyScript
         })
         .returning("*");
 
