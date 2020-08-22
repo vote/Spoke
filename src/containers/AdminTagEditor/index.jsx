@@ -147,6 +147,14 @@ class AdminTagEditor extends Component {
               onChange={this.createTagEditorHandle}
             />
             <br />
+            <TextField
+              name="onApplyScript"
+              floatingLabelText="Script"
+              multiLine={true}
+              value={editingTag.onApplyScript || ""}
+              onChange={this.createTagEditorHandle}
+            />
+            <br />
             <br />
             <Toggle
               name="isAssignable"
@@ -186,6 +194,7 @@ const queries = {
             title
             description
             isSystem
+            onApplyScript
             isAssignable
             createdAt
           }
