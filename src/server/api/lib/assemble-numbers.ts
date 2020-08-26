@@ -9,6 +9,7 @@ import { MessagingServiceType, MessagingServiceRecord, RequestHandlerFactory } f
 import { makeNumbersClient } from "../../lib/assemble-numbers";
 import { getFormattedPhoneNumber } from "../../../lib/phone-format";
 import { symmetricDecrypt } from "./crypto";
+import statsd from "../../statsd";
 import {
   SpokeSendStatus,
   getMessagingServiceById,
@@ -182,6 +183,9 @@ export const sendMessage = async (message: SendMessagePayload, organizationId: n
         service_response: JSON.stringify([result])
       })
       .where({ id: spokeMessageId });
+    if (statsd.isEnabled) {
+      statsd.getClient().increment("spoke.messages_sent");
+    }
   } catch (exc) {
     logger.error("Error sending message with Assemble Numbers: ", {
       ...errToObj(exc),
