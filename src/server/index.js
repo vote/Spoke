@@ -13,7 +13,7 @@ import { fulfillPendingRequestFor } from "./api/assignment";
 import requestLogging from "../lib/request-logging";
 import { checkForBadDeliverability } from "./api/lib/alerts";
 import cron from "node-cron";
-import hotShots from "hot-shots";
+import statsd from "./statsd";
 import connectDatadog from "connect-datadog-graphql";
 import {
   authRouter,
@@ -84,17 +84,13 @@ if (PUBLIC_DIR) {
   app.use(express.static(PUBLIC_DIR, { maxAge: "180 days" }));
 }
 
-if (config.DD_AGENT_HOST && config.DD_DOGSTATSD_PORT) {
+if (statsd.isEnabled) {
   const datadogOptions = {
-    dogstatsd: new hotShots.StatsD(
-      config.DD_AGENT_HOST,
-      config.DD_DOGSTATSD_PORT
-    ),
+    dogstatsd: statsd.getClient(),
     path: true,
     method: false,
     response_code: true,
     graphql_paths: ["/graphql"],
-    tags: config.DD_TAGS.split(",")
   };
 
   if (config.CLIENT_NAME) {
