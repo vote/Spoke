@@ -14,4 +14,5 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USER }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           repository: voteamerica/spoke
+          tag_with_sha: true
           tags: latest
