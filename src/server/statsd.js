@@ -1,7 +1,7 @@
-import hotShots from "hot-shots";
 import { config } from "../config";
+import hotShots from "hot-shots";
 
-const isEnabled = !!(config.DD_AGENT_HOST && config.DD_DOGSTATSD_PORT);
+const isEnabled = !!(config.DD_AGENT_HOST && config.DD_DOGSTATSD_PORT)
 
 let client;
 
@@ -13,21 +13,10 @@ const getClient = () => {
       globalTags: config.DD_TAGS.split(",")
     });
   }
-
   return client;
-};
-
-// experiment, revert if it's not needed
-const scopedClient = () => {
-  if (isEnabled) {
-    return getClient().childClient({
-      prefix: "spoke_custom."
-    });
-  }
-};
+}
 
 export default {
   isEnabled,
   getClient,
-  scopedClient
-};
+}

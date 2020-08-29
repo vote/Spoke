@@ -5,7 +5,6 @@ import { accessRequired } from "./errors";
 import groupBy from "lodash/groupBy";
 import { memoizer, cacheOpts } from "../memoredis";
 import { formatPage } from "./lib/pagination";
-import statsd from "../statsd";
 
 export function buildUserOrganizationQuery(
   queryParam,
@@ -252,7 +251,6 @@ export const resolvers = {
           "team.organization_id": organizationId
         }),
     todos: async (user, { organizationId }) => {
-      const timerStart = new Date(); // for dd timer
       const todos = await r.reader.raw(
         `
         select 
@@ -301,12 +299,6 @@ export const resolvers = {
         .whereIn("id", Object.keys(shadowCountsByAssignmentId))
         .orderBy("updated_at", "desc");
 
-      if (statsd.isEnabled) {
-        console.log("DEBUG: reporting get_todo_timing"); // TODO: delete this line
-        statsd.getClient().timing("get_todos_time", timerStart);
-        statsd.getClient().timing("spoke.get_todos_time", timerStart);
-        statsd.scopedClient().timing("get_todos_time_scoped", timerStart);
-      }
       return assignments.map(a =>
         Object.assign(a, {
           shadowCounts: shadowCountsByAssignmentId[a.id] || []
