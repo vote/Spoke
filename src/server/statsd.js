@@ -1,7 +1,7 @@
-import { config } from "../config";
 import hotShots from "hot-shots";
+import { config } from "../config";
 
-const isEnabled = !!(config.DD_AGENT_HOST && config.DD_DOGSTATSD_PORT)
+const isEnabled = !!(config.DD_AGENT_HOST && config.DD_DOGSTATSD_PORT);
 
 let client;
 
@@ -14,9 +14,9 @@ const getClient = () => {
     });
   }
   return client;
-}
+};
 
 export default {
   isEnabled,
   getClient,
-}
+};

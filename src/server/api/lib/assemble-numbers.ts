@@ -234,6 +234,11 @@ export const handleDeliveryReport = async (reportBody: NumbersDeliveryReportPayl
 export const processDeliveryReport = async (reportBody: NumbersDeliveryReportPayload) => {
   const { eventType, messageId, errorCodes, extra } = reportBody;
 
+  if (errorCodes && errorCodes.length > 0) {
+    const tags = errorCodes.map(code => `twilio_error_code:${code}`);
+    statsd.getClient().increment("spoke.message_errors", tags);
+  }
+
   await r.knex.transaction(async (trx: Knex.Transaction) => {
     // Update send status if message is not already "complete"
     await trx("message")
