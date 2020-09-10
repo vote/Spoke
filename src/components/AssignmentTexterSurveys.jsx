@@ -92,7 +92,7 @@ class AssignmentTexterSurveys extends Component {
       <MenuItem
         key="clear"
         value="clearResponse"
-        primaryText="Clear response"
+        primaryText="No suitable answer"
       />
     );
 
