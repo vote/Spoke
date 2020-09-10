@@ -20,6 +20,8 @@ import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
 import LockOpenIcon from "material-ui/svg-icons/action/lock-open";
 import LockIcon from "material-ui/svg-icons/action/lock";
 import LocalOfferIcon from "material-ui/svg-icons/maps/local-offer";
+import Dialog from "material-ui/Dialog";
+import FlatButton from "material-ui/FlatButton";
 
 import { isContactNowWithinCampaignHours } from "../../lib/timezones";
 import {
@@ -277,13 +279,31 @@ export class AssignmentTexterContact extends React.Component {
     return [null, ""];
   };
 
-  handleOpenPopover = event => {
-    event.preventDefault();
+  isCannedResponseEnabled = () => {
+    if (this.state.forceShowCannedResponses) {
+      return true;
+    }
+
     const { assignment } = this.props;
     const { userCannedResponses, campaignCannedResponses } = assignment;
-    const isCannedResponseEnabled =
-      userCannedResponses.length + campaignCannedResponses.length > 0;
-    if (isCannedResponseEnabled) {
+    if (userCannedResponses.length + campaignCannedResponses.length == 0) {
+      return false;
+    }
+
+    if (
+      this.state.currentInteractionStep &&
+      this.state.currentInteractionStep.question &&
+      this.state.currentInteractionStep.question.text
+    ) {
+      return false;
+    }
+
+    return true;
+  };
+
+  handleOpenPopover = event => {
+    event.preventDefault();
+    if (this.isCannedResponseEnabled()) {
       this.setState({
         responsePopoverAnchorEl: event.currentTarget,
         responsePopoverOpen: true
@@ -509,10 +529,13 @@ export class AssignmentTexterContact extends React.Component {
 
     this.setState(
       {
-        questionResponses
+        questionResponses,
+        forceShowCannedResponses: true,
       },
       () => {
-        this.handleChangeScript(nextScript);
+        if (nextScript) {
+          this.handleChangeScript(nextScript);
+        }
       }
     );
   };
@@ -604,6 +627,42 @@ export class AssignmentTexterContact extends React.Component {
     return button;
   }
 
+  renderCannedResponses() {
+    if (!this.isCannedResponseEnabled()) {
+      return [
+          <RaisedButton
+            label="Canned responses"
+            disabled
+            onTouchTap={() => this.setState({cannedResponseModalOpen: true})}
+          />,
+          <Dialog
+            actions={
+              [
+                <FlatButton
+                  label="OK"
+                  primary={true}
+                  onClick={() => this.setState({cannedResponseModalOpen: false})}
+                />
+              ]
+            }
+            modal={true}
+            open={this.state.cannedResponseModalOpen}
+            onRequestClose={() => this.setState({cannedResponseModalOpen: false})}
+          >
+            You must select an answer to the survey question (or pick "No suitable answer") before
+            selecting a canned response.
+          </Dialog>
+      ]
+    }
+
+    return (
+      <RaisedButton
+        label="Canned responses"
+        onTouchTap={this.handleOpenPopover}
+      />
+    );
+  }
+
   toggleInitialMessageLock = () =>
     this.setState({ initialMessageLocked: !this.state.initialMessageLocked});
 
@@ -617,8 +676,6 @@ export class AssignmentTexterContact extends React.Component {
       onFinishContact
     } = this.props;
     const { userCannedResponses, campaignCannedResponses } = assignment;
-    const isCannedResponseEnabled =
-      userCannedResponses.length + campaignCannedResponses.length > 0;
     const { justSentNew, alreadySent } = this.state;
     const { messageStatus } = contact;
     const size = document.documentElement.clientWidth;
@@ -681,11 +738,7 @@ export class AssignmentTexterContact extends React.Component {
             onTouchTap={this.handleOpenOptOutDialog}
             tooltip="Opt out this contact"
           />
-          <RaisedButton
-            label="Canned replies"
-            onTouchTap={this.handleOpenPopover}
-            disabled={!isCannedResponseEnabled}
-          />
+          {this.renderCannedResponses()}
           {this.renderNeedsResponseToggleButton(contact)}
           <div style={{ flexGrow: 1, textAlign: "center" }}>
             {navigationToolbarChildren}
@@ -720,11 +773,7 @@ export class AssignmentTexterContact extends React.Component {
                 disabled={this.state.disabled}
               />
               {this.renderNeedsResponseToggleButton(contact)}
-              <RaisedButton
-                label="Canned responses"
-                onTouchTap={this.handleOpenPopover}
-                disabled={!isCannedResponseEnabled}
-              />
+              {this.renderCannedResponses()}
               <RaisedButton
                 {...dataTest("optOut")}
                 secondary
