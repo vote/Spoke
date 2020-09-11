@@ -206,7 +206,6 @@ class TexterRequest extends React.Component {
             label="Count"
             type="number"
             value={count}
-            disabled
             onChange={e => {
               const formVal = parseInt(e.target.value, 10) || 0;
               let count =
