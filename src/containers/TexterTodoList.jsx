@@ -19,12 +19,29 @@ const needSortFn = (x, y) =>
     : 1;
 const SORT_METHOD = dueBySortFn;
 
+// Add env vars
+const ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED = 2000;
+const ASSIGNMENT_REQUEST_BLOCK_UNREPLIED = 50;
+
 class TexterTodoList extends React.Component {
   state = {
     releasingReplies: false,
     releasedReplies: false,
     releasedRepliesError: undefined
   };
+
+  canRequestContacts(assignments) {
+    const unmessagedCount = assignments
+      .map(a => a.unmessagedCount)
+      .reduce((x, y) => x + y, 0);
+    const unrepliedCount = assignments
+      .map(a => a.unrepliedCount)
+      .reduce((x, y) => x + y, 0);
+    return !(
+      unmessagedCount > ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED
+      || unrepliedCount > ASSIGNMENT_REQUEST_BLOCK_UNREPLIED
+    );
+  }
 
   renderTodoList(assignments) {
     const { organizationId } = this.props.match.params;
@@ -106,10 +123,21 @@ class TexterTodoList extends React.Component {
             marginTop: 50
           }}
         >
-          <TexterRequest
-            user={this.props.data.currentUser}
-            organizationId={this.props.match.params.organizationId}
-          />
+          {this.canRequestContacts(todos) ?
+            <TexterRequest
+             user={this.props.data.currentUser}
+             organizationId={this.props.match.params.organizationId}
+            />
+            : <Paper>
+              <div style={{ padding: "20px" }}>
+                <h3>You must complete your current assignments before requesting more contacts</h3>
+                <p>
+                  You can request more contacts when you have fewer than ${ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED}
+                  unsent initials and fewer than ${ASSIGNMENT_REQUEST_BLOCK_UNREPLIED} unsent replies.
+                </p>
+              </div>
+            </Paper>
+          }
         </div>
         {renderedTodos.length === 0 ? empty : renderedTodos}
 
