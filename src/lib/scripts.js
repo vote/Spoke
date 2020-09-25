@@ -48,6 +48,11 @@ const getScriptFieldValue = (contact, texter, fieldName) => {
     result = texter.lastName;
   } else if (TOP_LEVEL_UPLOAD_FIELDS.indexOf(fieldName) !== -1) {
     result = contact[fieldName];
+  } else if (fieldName.startsWith("href_")) {
+    const customFields = JSON.parse(contact.customFields);
+    const href = new URL(customFields[fieldName]);
+    href.searchParams.append("c", contact.id);
+    result = href.toString();
   } else {
     const customFieldNames = JSON.parse(contact.customFields);
     result = customFieldNames[fieldName];
