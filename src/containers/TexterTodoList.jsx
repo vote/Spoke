@@ -6,6 +6,7 @@ import { compose } from "react-apollo";
 
 import { RaisedButton } from "material-ui";
 import Check from "material-ui/svg-icons/action/check-circle";
+import Paper from "material-ui/Paper";
 
 import { loadData } from "./hoc/with-operations";
 import Empty from "../components/Empty";
@@ -18,10 +19,6 @@ const needSortFn = (x, y) =>
     ? -1
     : 1;
 const SORT_METHOD = dueBySortFn;
-
-// Add env vars
-const ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED = 2000;
-const ASSIGNMENT_REQUEST_BLOCK_UNREPLIED = 50;
 
 class TexterTodoList extends React.Component {
   state = {
@@ -38,8 +35,8 @@ class TexterTodoList extends React.Component {
       .map(a => a.unrepliedCount)
       .reduce((x, y) => x + y, 0);
     return !(
-      unmessagedCount > ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED
-      || unrepliedCount > ASSIGNMENT_REQUEST_BLOCK_UNREPLIED
+      unmessagedCount > window.ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED
+      || unrepliedCount > window.ASSIGNMENT_REQUEST_BLOCK_UNREPLIED
     );
   }
 
@@ -132,8 +129,10 @@ class TexterTodoList extends React.Component {
               <div style={{ padding: "20px" }}>
                 <h3>You must complete your current assignments before requesting more contacts</h3>
                 <p>
-                  You can request more contacts when you have fewer than ${ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED}
-                  unsent initials and fewer than ${ASSIGNMENT_REQUEST_BLOCK_UNREPLIED} unsent replies.
+                  You can request more contacts when you have fewer
+                  than {window.ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED} unsent
+                  initials and fewer than {window.ASSIGNMENT_REQUEST_BLOCK_UNREPLIED} unsent
+                  replies.
                 </p>
               </div>
             </Paper>

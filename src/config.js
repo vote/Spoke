@@ -50,6 +50,16 @@ const validators = {
     desc: "Basic auth password to validate incoming requests to /autoassign.",
     default: undefined
   }),
+  ASSIGNMENT_REQUEST_BLOCK_UNMESSAGED: num({
+    desc: "Maximum number of unsent initials a texter can have before they are blocked from requesting assignments",
+    default: 2000,
+    isClient: true
+  }),
+  ASSIGNMENT_REQUEST_BLOCK_UNREPLIED: num({
+    desc: "Maximum number of unsent replies a texter can have before they are bloked from requesting assignments",
+    default: 50,
+    isClient: true
+  }),
   ASSIGNMENT_REQUESTED_URL: url({
     desc: "Webhook URL to notify when a texter assignment is requested.",
     default: undefined
