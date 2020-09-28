@@ -30,8 +30,8 @@ const summary = async () => {
   return result;
 };
 
-const BATCH_SIZE = 50000;
-const CONCURRENCY = 8;
+const BATCH_SIZE = 290000;
+const CONCURRENCY = 10;
 
 const resendMessage = async (
   id,
@@ -95,7 +95,7 @@ const rerun = async timezone => {
       AND NOT fm.retried
       AND message.num_media > 0
       AND NOT message.is_from_contact
-      AND campaign.id IN (2, 43, 5, 49)
+      -- AND campaign.id IN (2, 43, 5, 49)
       AND NOT campaign_contact.is_opted_out
        -- and coalesce(campaign_contact.timezone, campaign.timezone) = $2
     order by campaign.id
