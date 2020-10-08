@@ -2,6 +2,7 @@ import iconv from "iconv-lite";
 import AutoDetectDecoderStream from "autodetect-decoder-stream";
 import partition from "lodash/partition";
 import Papa from "papaparse";
+import { URL } from "url";
 
 import {
   validateCsv,
@@ -32,6 +33,20 @@ const sanitizeRawContact = rawContact => {
   return { ...contact, customFields };
 };
 
+const findInvalidHrefFields = contact => {
+  return Object.keys(contact.customFields)
+    .filter(key => key.startsWith("href_"))
+    .filter(key => {
+      try {
+        // eslint-disable-next-line no-new
+        new URL(contact.customFields[key]);
+        return false;
+      } catch (e) {
+        return true;
+      }
+    });
+};
+
 export const processContactsFile = async file => {
   const { createReadStream } = await file;
   const stream = createReadStream()
@@ -39,7 +54,7 @@ export const processContactsFile = async file => {
     .pipe(iconv.encodeStream("utf8"));
 
   return new Promise((resolve, reject) => {
-    let missingFields = undefined;
+    let abortMessage;
     let resultMeta = undefined;
     const resultData = [];
 
@@ -57,16 +72,25 @@ export const processContactsFile = async file => {
         // Exit early on bad header
         if (resultMeta === undefined) {
           resultMeta = meta;
-          missingFields = missingHeaderFields(meta.fields);
+          const missingFields = missingHeaderFields(meta.fields);
+          abortMessage = `CSV missing fields: ${missingFields}`;
           if (missingFields.length > 0) {
             parser.abort();
           }
         }
         const contact = sanitizeRawContact(data);
+
+        // exit early if any href fields contain invalid urls
+        const invalidHrefs = findInvalidHrefFields(contact);
+        if (invalidHrefs.length > 0) {
+          abortMessage = `CSV contains invalid hrefs: ${invalidHrefs}`;
+          parser.abort();
+        }
+        
         resultData.push(contact);
       },
       complete: ({ meta: { aborted } }) => {
-        if (aborted) return reject(`CSV missing fields: ${missingFields}`);
+        if (aborted) return reject(abortMessage);
         const { contacts, validationStats } = validateCsv({
           data: resultData,
           meta: resultMeta
