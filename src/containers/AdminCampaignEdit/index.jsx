@@ -31,6 +31,7 @@ import CampaignCannedResponsesForm from "./sections/CampaignCannedResponsesForm"
 import CampaignTextingHoursForm from "./sections/CampaignTextingHoursForm";
 import CampaignAutoassignModeForm from "./sections/CampaignAutoassignModeForm";
 import CampaignTeamsForm from "./sections/CampaignTeamsForm";
+import { allScriptFields } from "../../lib/scripts";
 
 const disableTexters = window.DISABLE_CAMPAIGN_EDIT_TEXTERS;
 
@@ -566,6 +567,23 @@ class AdminCampaignEdit extends React.Component {
     };
   }
 
+  validateScriptFields = () => {
+    const campaign = this.props.campaignData.campaign;
+    const scriptFields = allScriptFields(campaign.customFields);
+    const scripts = campaign.interactionSteps.flatMap(is => is.scriptOptions)
+    const re = /\{.*?\}/g
+    const invalid = scripts
+      .flatMap(s => s.match(re) || [])
+      .filter(m => {
+        const trimmed = m.substring(1, m.length - 1)
+        return !scriptFields.includes(trimmed)
+      })
+
+    if (invalid.length > 0) {
+      throw new Error(`Some scripts include invalid fields: ${invalid}`);
+    }
+  }
+
   renderCurrentEditors() {
     const { editors } = this.props.campaignData.campaign;
     if (editors) {
@@ -719,9 +737,16 @@ class AdminCampaignEdit extends React.Component {
               this.setState({
                 startingCampaign: true
               });
-              await this.props.mutations.startCampaign(
-                this.props.campaignData.campaign.id
-              );
+              try {
+                this.validateScriptFields();
+                await this.props.mutations.startCampaign(
+                  this.props.campaignData.campaign.id
+                );
+              } catch (e) {
+                this.setState({
+                  requestError: e.message
+                })
+              }
               this.setState({
                 startingCampaign: false
               });
