@@ -1,4 +1,5 @@
-import { r } from "../../models";
+import logger from "../../../logger";
+import { r, cacheableData } from "../../models";
 import { config } from "../../../config";
 import { eventBus, EventType } from "../../event-bus";
 import groupBy from "lodash/groupBy";
@@ -12,6 +13,27 @@ export const SpokeSendStatus = Object.freeze({
   Paused: "PAUSED",
   NotAttempted: "NOT_ATTEMPTED"
 });
+
+const AUTO_OPT_OUT_PHRASE_LIST = [
+  "fuck off",
+  "fuck you",
+  "stip",
+  "stoo",
+  "stop",
+  "stop!",
+  "stop!!",
+  "stop!!!",
+  "stop.",
+  "stop 🛑",
+  "please stop",
+  "please stop texting me",
+  "stop texting",
+  "stop texting me",
+  "unsubscribe",
+  "take me off your list",
+  "remove",
+  "opt out"
+];
 
 /**
  * Return a list of messaing services for an organization that are candidates for assignment.
@@ -339,7 +361,33 @@ export async function saveNewIncomingMessage(messageInstance) {
     .knex("message")
     .insert(messageInstance)
     .returning("*");
-  const { assignment_id, contact_number } = newMessage;
+
+  const { assignment_id, contact_number, text } = newMessage;
+
+  const normalizedText = text.trim().toLowerCase();
+  if (AUTO_OPT_OUT_PHRASE_LIST.includes(normalizedText)) {
+    try {
+      const { organization_id } = await r
+        .knex("assignment")
+        .join("campaign", "assignment.campaign_id", "campaign.id")
+        .select("campaign.organization_id")
+        .first();
+
+      await cacheableData.optOut.save({
+        organizationId: organization_id,
+        cell: contact_number,
+        reason: `Automatic opt-opt. Text: '${text}'`,
+        assignmentId: assignment_id
+      });
+
+      // only return if the opt out saved successfully, otherwise
+      // let a texter handle it
+      return;
+    } catch (e) {
+      logger.error(`Error processing auto opt out for ${contact_number}`, e);
+    }
+  }
+
   const payload = {
     assignmentId: assignment_id,
     contactNumber: contact_number
