@@ -84,7 +84,7 @@ const resendMessage = async (
   }
 };
 
-const rerun = async timezone => {
+const rerun = async () => {
   console.log("START", new Date());
   const { rows: messages } = await pool.query(
     `
@@ -155,6 +155,6 @@ const rerun = async timezone => {
 };
 
 summary()
-  .then(() => rerun("America/New_York"))
+  .then(() => rerun())
   .then(summary)
   .then(console.log);
