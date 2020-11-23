@@ -27,6 +27,11 @@ enum ContactSourceType {
   SQL = "SQL"
 }
 
+interface ContactSource {
+  source: ContactSourceType;
+  disabledReason?: string;
+}
+
 interface ContactsValues {
   contactSql: string | null;
   contactsFile: File | null;
@@ -38,13 +43,14 @@ interface ContactsCampaign {
   id: string;
   customFields: string[];
   contactsCount: number;
+  externalSystem: { id: string } | null;
   datawarehouseAvailable: boolean;
 }
 
 interface ContactsOrganization {
   id: string;
   numbersApiKey: string;
-  externalSystems: RelayPaginatedResponse<{ id: string }>;
+  externalSystems: Pick<RelayPaginatedResponse<never>, "pageInfo">;
   campaigns: {
     campaigns: {
       id: string;
@@ -97,6 +103,13 @@ class CampaignContactsForm extends React.Component<
     externalListId: null,
     filterOutLandlines: false
   };
+
+  constructor(props: ContactsInnerProps) {
+    super(props);
+
+    const options = this.getSourceOptions();
+    this.state.source = options.find(op => !op.disabledReason)!.source;
+  }
 
   handleOnChangeValidSql = (contactsSql: string | null) =>
     this.setState({ contactsSql });
@@ -155,6 +168,41 @@ class CampaignContactsForm extends React.Component<
     this.setState({ source });
   };
 
+  getSourceOptions = (): ContactSource[] => {
+    const {
+      datawarehouseAvailable,
+      externalSystem
+    } = this.props.campaignData.campaign;
+    const { externalSystems } = this.props.organizationData.organization;
+    const sourceOptions = [];
+
+    // CSV
+    const csvDisabled = externalSystem !== null;
+    sourceOptions.push({
+      source: ContactSourceType.CSV,
+      disabled: csvDisabled,
+      disabledReason: csvDisabled ? "using an integration" : undefined
+    });
+
+    // Integration
+    if (externalSystems.pageInfo.totalCount > 0) {
+      const disabled = externalSystem === null;
+      sourceOptions.push({
+        source: ContactSourceType.ExternalSystem,
+        disabledReason: disabled
+          ? "not configured for this campaign"
+          : undefined
+      });
+    }
+
+    // Data warehouse
+    if (datawarehouseAvailable) {
+      sourceOptions.push({ source: ContactSourceType.SQL, disabled: false });
+    }
+
+    return sourceOptions;
+  };
+
   render() {
     const {
       source,
@@ -165,7 +213,6 @@ class CampaignContactsForm extends React.Component<
       externalListId
     } = this.state;
     const {
-      organizationId,
       campaignId,
       campaignData,
       organizationData,
@@ -176,11 +223,10 @@ class CampaignContactsForm extends React.Component<
     const {
       customFields,
       contactsCount,
-      datawarehouseAvailable
+      externalSystem
     } = campaignData.campaign;
 
     const {
-      externalSystems,
       campaigns: { campaigns: allCampaigns }
     } = organizationData.organization;
 
@@ -190,14 +236,7 @@ class CampaignContactsForm extends React.Component<
       isWorking || (!isNew && !contactsFile && !contactsSql && !externalListId);
     const finalSaveLabel = isWorking ? "Working..." : saveLabel;
 
-    // Configure contact sources
-    const sourceOptions = [ContactSourceType.CSV];
-    if (externalSystems.edges.length > 0) {
-      sourceOptions.push(ContactSourceType.ExternalSystem);
-    }
-    if (datawarehouseAvailable) {
-      sourceOptions.push(ContactSourceType.SQL);
-    }
+    const sourceOptions = this.getSourceOptions();
 
     return (
       <div>
@@ -213,11 +252,14 @@ class CampaignContactsForm extends React.Component<
           fullWidth={true}
           onChange={this.handleOnChangeSource}
         >
-          {sourceOptions.map(sourceOption => (
+          {sourceOptions.map(({ source, disabledReason }) => (
             <MenuItem
-              key={sourceOption}
-              value={sourceOption}
-              primaryText={sourceOption}
+              key={source}
+              value={source}
+              primaryText={
+                disabledReason ? `${source} (${disabledReason})` : source
+              }
+              disabled={disabledReason !== undefined}
             />
           ))}
         </SelectField>
@@ -229,13 +271,14 @@ class CampaignContactsForm extends React.Component<
             onContactsFileChange={this.handleOnContactsFileChange}
           />
         )}
-        {source === ContactSourceType.ExternalSystem && (
-          <ExternalSystemsSource
-            organizationId={organizationId}
-            selectedListId={externalListId}
-            onChangeExternalList={this.handleOnExternalListChange}
-          />
-        )}
+        {source === ContactSourceType.ExternalSystem &&
+          externalSystem && (
+            <ExternalSystemsSource
+              systemId={externalSystem.id}
+              selectedListId={externalListId}
+              onChangeExternalList={this.handleOnExternalListChange}
+            />
+          )}
         {source === ContactSourceType.SQL && (
           <ContactsSqlForm
             style={{ marginTop: "20px" }}
@@ -266,6 +309,9 @@ const queries = {
           id
           customFields
           contactsCount
+          externalSystem {
+            id
+          }
           datawarehouseAvailable
         }
       }
@@ -283,10 +329,8 @@ const queries = {
           id
           numbersApiKey
           externalSystems {
-            edges {
-              node {
-                id
-              }
+            pageInfo {
+              totalCount
             }
           }
           campaigns(cursor: { offset: 0, limit: 5000 }) {

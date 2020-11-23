@@ -32,6 +32,7 @@ import CampaignTextingHoursForm from "./sections/CampaignTextingHoursForm";
 import CampaignAutoassignModeForm from "./sections/CampaignAutoassignModeForm";
 import CampaignTeamsForm from "./sections/CampaignTeamsForm";
 import { allScriptFields } from "../../lib/scripts";
+import CampaignIntegrationForm from "./sections/CampaignIntegrationForm";
 
 const disableTexters = window.DISABLE_CAMPAIGN_EDIT_TEXTERS;
 
@@ -83,11 +84,6 @@ const campaignInfoFragment = `
     answerActions
     parentInteractionId
     isDeleted
-  }
-  cannedResponses {
-    id
-    title
-    text
   }
   editors
 `;
@@ -369,6 +365,16 @@ class AdminCampaignEdit extends React.Component {
         expandableBySuperVolunteers: false
       },
       {
+        title: "Integration",
+        content: CampaignIntegrationForm,
+        isStandalone: true,
+        keys: ["externalSystem"],
+        checkCompleted: () => true,
+        blocksStarting: false,
+        expandAfterCampaignStarts: false,
+        expandableBySuperVolunteers: false
+      },
+      {
         title: "Contacts",
         content: CampaignContactsForm,
         isStandalone: true,
@@ -502,6 +508,7 @@ class AdminCampaignEdit extends React.Component {
       {
         title: "Canned Responses",
         content: CampaignCannedResponsesForm,
+        isStandalone: true,
         keys: ["cannedResponses"],
         checkCompleted: () => true,
         blocksStarting: true,

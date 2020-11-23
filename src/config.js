@@ -1,5 +1,6 @@
 const envalid = require("envalid");
 const pickBy = require("lodash/pickBy");
+
 const { str, bool, num, email, url, host, port } = envalid;
 
 const validators = {
@@ -63,10 +64,6 @@ const validators = {
   ASSIGNMENT_REQUESTED_URL: url({
     desc: "Webhook URL to notify when a texter assignment is requested.",
     default: undefined
-  }),
-  ASSIGNMENT_REQUESTED_ALL_STRINGS: bool({
-    desc: "If true, all payload values will be converted to strings.",
-    default: false
   }),
   ASSIGNMENT_REQUESTED_URL_REQUIRED: bool({
     desc:
@@ -321,6 +318,11 @@ const validators = {
     desc: "Whether to enable trollbot",
     default: false,
     isClient: true
+  }),
+  TROLL_ALERT_PERIOD_MINUTES: num({
+    desc:
+      "The interval length in minutes that each troll patrol sweep will examine messages within.",
+    default: 6
   }),
   DISABLE_TEXTER_NOTIFICATIONS: bool({
     desc:
@@ -593,6 +595,11 @@ const validators = {
     desc: "Endpoint URL for Rollbar error tracking.",
     default: undefined
   }),
+  SEND_DELAY: num({
+    desc: "Delay between successive sends in Spoke client",
+    default: 100,
+    isClient: true
+  }),
   SESSION_SECRET: str({
     desc: "Unique key used to encrypt sessions."
   }),
@@ -637,6 +644,11 @@ const validators = {
     desc:
       "If set, then on post-install (often from deploying) a message will be posted to a slack channel's #spoke channel",
     default: undefined
+  }),
+  SLACK_SYNC_CHANNELS: bool({
+    desc:
+      "If true, Spoke team membership will be synced with matching Slack channel membership",
+    default: false
   }),
   STATIC_BASE_URL: str({
     desc: "Alternate static base url",
@@ -768,6 +780,10 @@ const validators = {
   WAREHOUSE_DB_LAMBDA_ITERATION: bool({
     desc:
       "If the WAREHOUSE_DB connection/feature is enabled, then on AWS Lambda, queries that take longer than 5min can expire. This will enable incrementing through queries on new lambda invocations to avoid timeouts.",
+    default: false
+  }),
+  WEBHOOK_PAYLOAD_ALL_STRINGS: bool({
+    desc: "If true, all payload values will be converted to strings.",
     default: false
   }),
   WORKER_CONCURRENCY: num({
