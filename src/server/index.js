@@ -7,8 +7,6 @@ import basicAuth from "express-basic-auth";
 import passport from "passport";
 import { createTerminus } from "@godaddy/terminus";
 import connectDatadog from "connect-datadog-graphql";
-import hotShots from "hot-shots";
-
 import { config } from "../config";
 import logger from "../logger";
 import appRenderer from "./middleware/app-renderer";
@@ -16,9 +14,7 @@ import { setupUserNotificationObservers } from "./notifications";
 import { fulfillPendingRequestFor } from "./api/assignment";
 import requestLogging from "../lib/request-logging";
 import { checkForBadDeliverability } from "./api/lib/alerts";
-import cron from "node-cron";
 import statsd from "./statsd";
-import connectDatadog from "connect-datadog-graphql";
 import {
   authRouter,
   graphqlRouter,
