@@ -37,7 +37,7 @@ RUN yarn run build
 
 ### Slim Deploy
 ### -------------------------
-FROM node:12.16.1-alpine
+FROM node:12.20.0-alpine
 
 WORKDIR /usr/Spoke
 
