@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - vote-main
+      - vote-merge-rewired
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
