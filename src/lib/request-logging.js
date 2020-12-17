@@ -1,7 +1,6 @@
 import { config } from "../config";
 import winston from "winston";
 import expressWinston from "express-winston";
-import "winston-mongodb";
 
 expressWinston.requestWhitelist.push("body");
 
