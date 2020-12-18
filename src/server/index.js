@@ -28,10 +28,10 @@ import { r } from "./models";
 import { getWorker } from "./worker";
 import { errToObj } from "./utils";
 
-process.on("uncaughtException", ex => {
-  logger.error("uncaughtException: ", ex);
-  process.exit(1);
-});
+// process.on("uncaughtException", ex => {
+//   logger.error("uncaughtException: ", ex);
+//   process.exit(1);
+// });
 
 process.on("unhandledRejection", err => {
   logger.error("unhandledRejection: ", err);
