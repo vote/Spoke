@@ -1,5 +1,5 @@
 import express from "express";
-import passport from "passport";
+import passport from "@passport-next/passport";
 import Auth0Strategy from "passport-auth0";
 import passportSlack from "@aoberoi/passport-slack";
 import { Strategy as LocalStrategy } from "passport-local";

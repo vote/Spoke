@@ -4,7 +4,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cookieSession from "cookie-session";
 import basicAuth from "express-basic-auth";
-import passport from "passport";
+import passport from "@passport-next/passport";
 import { createTerminus } from "@godaddy/terminus";
 // import connectDatadog from "connect-datadog-graphql";
 import { config } from "../config";
@@ -91,7 +91,7 @@ if (statsd.isEnabled) {
     path: true,
     method: false,
     response_code: true,
-    graphql_paths: ["/graphql"],
+    graphql_paths: ["/graphql"]
   };
 
   if (config.CLIENT_NAME) {
@@ -177,7 +177,7 @@ const beforeShutdown = () => {
 
 const teardownKnex = async () => {
   logger.info("Starting cleanup of Postgres pools.");
-  const readerPromise = !!config.DATABASE_READER_URL
+  const readerPromise = config.DATABASE_READER_URL
     ? r.reader.destroy().then(() => logger.info("  - tore down Knex reader"))
     : Promise.resolve();
   return Promise.all([
