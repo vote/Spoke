@@ -95,10 +95,12 @@ function setupSlackPassport() {
   );
 
   const handleLogin = async (req, res) => {
+    logger.warn('98: Inside handle login with', req.user)
     const user = req.user;
     // set slack_id to auth0Id to avoid changing the schema
     const auth0Id = user && user.id;
     if (!auth0Id) {
+      logger.warn('103: null user')
       throw new Error("Null user in login callback");
     }
     let existingUser = await r
@@ -123,6 +125,7 @@ function setupSlackPassport() {
     }
 
     if (!existingUser) {
+      logger.warn('128: no existing user')
       let first_name, last_name;
       const splitName = user.name ? user.name.split(" ") : ["First", "Last"];
       if (user.first_name && user.last_name) {
@@ -160,6 +163,7 @@ function setupSlackPassport() {
       return redirectPostSignIn(req, res, true);
     }
 
+    logger.warn('166: returning')
     return redirectPostSignIn(req, res);
   };
 
