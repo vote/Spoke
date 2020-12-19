@@ -16,7 +16,6 @@ const {
   BASE_URL,
   AUTOJOIN_ORG_UUID,
   SLACK_TEAM_NAME,
-  SLACK_TEAM_ID,
   SLACK_CLIENT_ID,
   SLACK_CLIENT_SECRET,
   SLACK_SCOPES,
@@ -171,8 +170,7 @@ function setupSlackPassport() {
   app.get(
     "/login",
     passport.authenticate("slack", {
-      scope: SLACK_SCOPES.split(","),
-      team: SLACK_TEAM_ID
+      scope: SLACK_SCOPES.split(",")
     })
   );
 
