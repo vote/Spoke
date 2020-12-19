@@ -4800,10 +4800,10 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
-assemble-numbers-client@^1.2.3:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/assemble-numbers-client/-/assemble-numbers-client-1.2.3.tgz#51e0b8abd6d98c9524c593a7be2a537c32e13862"
-  integrity sha512-mADPzZkF2CGrGxEUmQvdnhCTcbj6VZMWQoapd1lkggqP6RWVaZT5xlmfkRQEWPwxyv3wnJZNDUJH7rXp9LyehA==
+assemble-numbers-client@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/assemble-numbers-client/-/assemble-numbers-client-1.2.4.tgz#6129d06ab0746326daac2424e7685fc392dc3092"
+  integrity sha512-VadHV/Hpl9DpiY6QwrQiSCibR2pDIlzlwsqsbcINPObRK12wOhlDcJrT7v9b+kZmBy6RBAa+d6d9r4h4XV7oNg==
   dependencies:
     lodash "^4.17.14"
     sha.js "^2.4.11"
