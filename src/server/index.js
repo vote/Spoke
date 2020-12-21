@@ -6,7 +6,7 @@ import cookieSession from "cookie-session";
 import basicAuth from "express-basic-auth";
 import passport from "@passport-next/passport";
 import { createTerminus } from "@godaddy/terminus";
-// import connectDatadog from "connect-datadog-graphql";
+import connectDatadog from "connect-datadog-graphql";
 import { config } from "../config";
 import logger from "../logger";
 import appRenderer from "./middleware/app-renderer";
@@ -98,7 +98,7 @@ if (statsd.isEnabled) {
     datadogOptions.tags.push(`client:${config.CLIENT_NAME}`);
   }
 
-  // app.use(connectDatadog(datadogOptions));
+  app.use(connectDatadog(datadogOptions));
 }
 
 app.use(authRouter);
