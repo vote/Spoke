@@ -8,6 +8,17 @@ import logger from "../logger";
 import handleAutoassignmentRequest from "./tasks/handle-autoassignment-request";
 import handleDeliveryReport from "./tasks/handle-delivery-report";
 import { releaseStaleReplies } from "./tasks/release-stale-replies";
+import { trollPatrol, trollPatrolForOrganization } from "./tasks/troll-patrol";
+import syncSlackTeamMembers from "./tasks/sync-slack-team-members";
+import fetchVANSurveyQuestions from "./tasks/fetch-van-survey-questions";
+import fetchVANActivistCodes from "./tasks/fetch-van-activist-codes";
+import fetchVANResultCodes from "./tasks/fetch-van-result-codes";
+import {
+  syncCampaignContactToVAN,
+  updateVanSyncStatuses
+} from "./tasks/sync-campaign-contact-to-van";
+import exportCampaign from "./tasks/export-campaign";
+import { exportForVan } from "./tasks/export-for-van";
 
 const logFactory: LogFunctionFactory = scope => (level, message, meta) =>
   logger.log({ level, message, ...meta, ...scope });
@@ -38,6 +49,16 @@ export const getWorker = async (attempt = 0): Promise<PgComposeWorker> => {
   m.taskList!["handle-autoassignment-request"] = handleAutoassignmentRequest;
   m.taskList!["release-stale-replies"] = releaseStaleReplies;
   m.taskList!["handle-delivery-report"] = handleDeliveryReport;
+  m.taskList!["troll-patrol"] = trollPatrol;
+  m.taskList!["troll-patrol-for-org"] = trollPatrolForOrganization;
+  m.taskList!["sync-slack-team-members"] = syncSlackTeamMembers;
+  m.taskList!["van-get-survey-questions"] = fetchVANSurveyQuestions;
+  m.taskList!["van-get-activist-codes"] = fetchVANActivistCodes;
+  m.taskList!["van-get-result-codes"] = fetchVANResultCodes;
+  m.taskList!["van-sync-campaign-contact"] = syncCampaignContactToVAN;
+  m.taskList!["update-van-sync-statuses"] = updateVanSyncStatuses;
+  m.taskList!["export-campaign"] = exportCampaign;
+  m.taskList!["export-campaign-for-van"] = exportForVan;
 
   m.cronJobs!.push({
     name: "release-stale-replies",
@@ -45,6 +66,38 @@ export const getWorker = async (attempt = 0): Promise<PgComposeWorker> => {
     pattern: "*/5 * * * *",
     time_zone: config.TZ
   });
+
+  m.cronJobs!.push({
+    name: "update-van-sync-statuses",
+    task_name: "update-van-sync-statuses",
+    pattern: "* * * * *",
+    time_zone: config.TZ
+  });
+
+  if (config.SLACK_SYNC_CHANNELS) {
+    if (config.SLACK_TOKEN) {
+      m.cronJobs!.push({
+        name: "sync-slack-team-members",
+        task_name: "sync-slack-team-members",
+        pattern: `*/10 * * * *`,
+        time_zone: config.TZ
+      });
+    } else {
+      logger.error(
+        "Could not enable slack channel sync. No SLACK_TOKEN present."
+      );
+    }
+  }
+
+  if (config.ENABLE_TROLLBOT) {
+    const jobInterval = config.TROLL_ALERT_PERIOD_MINUTES - 1;
+    m.cronJobs!.push({
+      name: "troll-patrol",
+      task_name: "troll-patrol",
+      pattern: `*/${jobInterval} * * * *`,
+      time_zone: config.TZ
+    });
+  }
 
   if (!worker) {
     workerSemaphore = true;

@@ -108,7 +108,7 @@ class AdminShortLinkDomains extends Component {
     }
 
     if (shortLinkDomains.errors) {
-      return <p>{shortLinkDomains.errors}</p>;
+      return <PrettyErrors errors={shortLinkDomains.errors} />;
     }
 
     const { linkDomains } = shortLinkDomains.organization;

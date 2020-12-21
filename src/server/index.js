@@ -1,20 +1,20 @@
+import http from "http";
+import cron from "node-cron";
+import express from "express";
+import bodyParser from "body-parser";
+import cookieSession from "cookie-session";
+import basicAuth from "express-basic-auth";
+import passport from "@passport-next/passport";
+import { createTerminus } from "@godaddy/terminus";
+import connectDatadog from "connect-datadog-graphql";
 import { config } from "../config";
 import logger from "../logger";
-import bodyParser from "body-parser";
-import express from "express";
-import http from "http";
-import { createTerminus } from "@godaddy/terminus";
 import appRenderer from "./middleware/app-renderer";
-import passport from "passport";
-import cookieSession from "cookie-session";
 import { setupUserNotificationObservers } from "./notifications";
-import basicAuth from "express-basic-auth";
 import { fulfillPendingRequestFor } from "./api/assignment";
 import requestLogging from "../lib/request-logging";
 import { checkForBadDeliverability } from "./api/lib/alerts";
-import cron from "node-cron";
 import statsd from "./statsd";
-import connectDatadog from "connect-datadog-graphql";
 import {
   authRouter,
   graphqlRouter,
@@ -26,6 +26,7 @@ import {
 } from "./routes";
 import { r } from "./models";
 import { getWorker } from "./worker";
+import { errToObj } from "./utils";
 
 process.on("uncaughtException", ex => {
   logger.error("uncaughtException: ", ex);
@@ -90,7 +91,7 @@ if (statsd.isEnabled) {
     path: true,
     method: false,
     response_code: true,
-    graphql_paths: ["/graphql"],
+    graphql_paths: ["/graphql"]
   };
 
   if (config.CLIENT_NAME) {
@@ -143,6 +144,18 @@ app.post(
 // This middleware should be last. Return the React app only if no other route is hit.
 app.use(appRenderer);
 
+// Custom error handling
+app.use((err, req, res, next) => {
+  logger.warn("Unhandled express error: ", {
+    error: errToObj(err),
+    req
+  });
+  if (res.headersSent) {
+    return next(err);
+  }
+  return res.status(500).json({ error: true });
+});
+
 const server = http.createServer(app);
 
 // Ensure database is reachable
@@ -164,7 +177,7 @@ const beforeShutdown = () => {
 
 const teardownKnex = async () => {
   logger.info("Starting cleanup of Postgres pools.");
-  const readerPromise = !!config.DATABASE_READER_URL
+  const readerPromise = config.DATABASE_READER_URL
     ? r.reader.destroy().then(() => logger.info("  - tore down Knex reader"))
     : Promise.resolve();
   return Promise.all([

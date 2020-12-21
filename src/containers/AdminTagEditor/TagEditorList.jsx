@@ -50,27 +50,24 @@ class TagEditorList extends Component {
     return (
       <div style={styles.wrapper}>
         {tags.map(tag => (
-          <Card key={tag.id} style={styles.card}>
-            <CardText>
-              <div style={{ display: "flex" }}>
-                <Chip backgroundColor={"#DDEEEE"} style={styles.chip}>
-                  {tag.title}
-                </Chip>
-              </div>
-              {tag.description && (
-                <p style={styles.description}>{tag.description}</p>
-              )}
-              <p>
-                Assignable?{" "}
-                {tag.isAssignable ? <CheckCircleIcon /> : <BlockIcon />}
-              </p>
-              <p style={styles.description}>
-                {tag.onApplyScript && this.truncateText(tag.onApplyScript, 100)}
-              </p>
-              {tag.isSystem && <p>System tags cannot be edited</p>}
-
-            </CardText>
-            <CardActions>
+          <Paper key={tag.id} style={styles.card}>
+            <div style={{ display: "flex" }}>
+              <Chip
+                backgroundColor={tag.backgroundColor}
+                labelColor={tag.textColor}
+                style={styles.chip}
+              >
+                {tag.title}
+              </Chip>
+            </div>
+            {tag.description && (
+              <p style={styles.description}>{tag.description}</p>
+            )}
+            <p>
+              Assignable?{" "}
+              {tag.isAssignable ? <CheckCircleIcon /> : <BlockIcon />}
+            </p>
+            <div style={{ display: "flex" }}>
               <RaisedButton
                 label="Edit"
                 labelPosition="before"
@@ -91,9 +88,8 @@ class TagEditorList extends Component {
                 }
                 onClick={this.createHandleDeleteTag(tag.id)}
               />
-            </CardActions>
-
-          </Card>
+            </div>
+          </Paper>
         ))}
       </div>
     );

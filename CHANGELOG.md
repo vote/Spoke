@@ -2,6 +2,186 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.9.0](https://github.com/politics-rewired/spoke/compare/v3.8.1...v3.9.0) (2020-11-16)
+
+
+### Features
+
+* **tags:** add confirmation steps  ([#764](https://github.com/politics-rewired/spoke/issues/764)) ([c1fc977](https://github.com/politics-rewired/spoke/commit/c1fc97714107074ce9671ec1634c60fff9e223d8))
+* configurable send delay ([#763](https://github.com/politics-rewired/spoke/issues/763)) ([8ed5779](https://github.com/politics-rewired/spoke/commit/8ed577939c21228120347f3502af3430fba7ae9b))
+
+
+### Bug Fixes
+
+* **canned responses:** remove ref from functional component ([#762](https://github.com/politics-rewired/spoke/issues/762)) ([e49a96a](https://github.com/politics-rewired/spoke/commit/e49a96ae8c56e91a09667a5ae26a6f626008cda9))
+* **exports:** rm catches in helper fns ([#761](https://github.com/politics-rewired/spoke/issues/761)) ([2a85b74](https://github.com/politics-rewired/spoke/commit/2a85b74d2267a172c614f753421619c213e47a62))
+
+### [3.8.1](https://github.com/politics-rewired/spoke/compare/v3.8.0...v3.8.1) (2020-11-02)
+
+
+### Bug Fixes
+
+* **edit-campaign:** revert extract canned responses section ([#751](https://github.com/politics-rewired/spoke/issues/751)) ([3adf21c](https://github.com/politics-rewired/spoke/commit/3adf21c390ddd2c0e860af3a46bd4df86bae51ea))
+
+## [3.8.0](https://github.com/politics-rewired/spoke/compare/v3.7.0...v3.8.0) (2020-11-01)
+
+
+### Features
+
+* **tags:** display tag colors in tag selector ([#758](https://github.com/politics-rewired/spoke/issues/758)) ([9defafc](https://github.com/politics-rewired/spoke/commit/9defafc662de7ea4953b7ea2fb26867546f99b05))
+* **tags:** restore soft delete ([#759](https://github.com/politics-rewired/spoke/issues/759)) ([f56f88d](https://github.com/politics-rewired/spoke/commit/f56f88d66d7ae02426ebc83eab4e5a9a6a1734f2))
+
+## [3.7.0](https://github.com/politics-rewired/spoke/compare/v3.6.1...v3.7.0) (2020-10-27)
+
+
+### Features
+
+* **tags:** expose script, color and webhook url editing in tag editor ([#757](https://github.com/politics-rewired/spoke/issues/757)) ([2db5ff0](https://github.com/politics-rewired/spoke/commit/2db5ff011899b86e279a3eedc67da961cbff51b9))
+
+### [3.6.1](https://github.com/politics-rewired/spoke/compare/v3.6.0...v3.6.1) (2020-10-24)
+
+
+### Bug Fixes
+
+* format sendBefore as string ([#756](https://github.com/politics-rewired/spoke/issues/756)) ([b09ef9b](https://github.com/politics-rewired/spoke/commit/b09ef9bc7d6dd4d618f2e535118d81cbe01f4c7e))
+
+## [3.6.0](https://github.com/politics-rewired/spoke/compare/v3.5.1...v3.6.0) (2020-10-23)
+
+
+### Features
+
+* log express errors with winston logger ([#754](https://github.com/politics-rewired/spoke/issues/754)) ([dfced8e](https://github.com/politics-rewired/spoke/commit/dfced8e67efa20bb3f65c1d4a7e4ab5fb3439091))
+
+
+### Bug Fixes
+
+* fetch myAssignmentTargets only if logged in ([#753](https://github.com/politics-rewired/spoke/issues/753)) ([83aa1c1](https://github.com/politics-rewired/spoke/commit/83aa1c12b3253b3ea22df81a7217cac575856df9))
+
+### [3.5.1](https://github.com/politics-rewired/spoke/compare/v3.5.0...v3.5.1) (2020-10-21)
+
+
+### Bug Fixes
+
+* **van-export:** fix canvassed date ([#750](https://github.com/politics-rewired/spoke/issues/750)) ([2352f48](https://github.com/politics-rewired/spoke/commit/2352f48905ef79eb2ef5befbd8e0b5b08cf24a65))
+
+## [3.5.0](https://github.com/politics-rewired/spoke/compare/v3.4.0...v3.5.0) (2020-10-21)
+
+
+### Features
+
+* add troll alarm count to admin dashboard ([#749](https://github.com/politics-rewired/spoke/issues/749)) ([fe14d4b](https://github.com/politics-rewired/spoke/commit/fe14d4b718d84e4f594e2dfc48c02ca66abc8ace))
+* populate tags in dropdown ([#746](https://github.com/politics-rewired/spoke/issues/746)) ([3ea96bc](https://github.com/politics-rewired/spoke/commit/3ea96bcb8575facfb61367c14130421905d0b9f3))
+
+
+### Bug Fixes
+
+* **assemble:sendmessage:** add sendBefore support for assemble ([#747](https://github.com/politics-rewired/spoke/issues/747)) ([57b5aa0](https://github.com/politics-rewired/spoke/commit/57b5aa0925dbc35765a26477369c1aa3d55f3049))
+
+## [3.4.0](https://github.com/politics-rewired/spoke/compare/v3.3.0...v3.4.0) (2020-10-09)
+
+
+### Features
+
+* **trollbot:** support all-string payloads ([#744](https://github.com/politics-rewired/spoke/issues/744)) ([b44847a](https://github.com/politics-rewired/spoke/commit/b44847a7fa29124ddc6b29d39033c8c73a90eea9))
+
+
+### Bug Fixes
+
+* fix variable name ([6e30eb6](https://github.com/politics-rewired/spoke/commit/6e30eb6225a56eef45d5045bec746be589f8630e))
+
+## [3.3.0](https://github.com/politics-rewired/spoke/compare/v3.2.0...v3.3.0) (2020-10-08)
+
+
+### Features
+
+* **trollbot:** support webhooks for trollbot alarms ([#742](https://github.com/politics-rewired/spoke/issues/742)) ([2ffb28a](https://github.com/politics-rewired/spoke/commit/2ffb28a98262102aacb96369b3d232e2b42ffeac))
+
+## [3.2.0](https://github.com/politics-rewired/spoke/compare/v3.1.2...v3.2.0) (2020-10-08)
+
+
+### Features
+
+* **exports:** move export to graphile worker ([#738](https://github.com/politics-rewired/spoke/issues/738)) ([89bd9ac](https://github.com/politics-rewired/spoke/commit/89bd9acf379d439b945869b09fa44958fecd25b0))
+* remove 'GraphQl Error:' from error messages ([#737](https://github.com/politics-rewired/spoke/issues/737)) ([33de981](https://github.com/politics-rewired/spoke/commit/33de981965f49a0f406d4b84ee085623668fbce0))
+
+
+### Bug Fixes
+
+* restore missing import ([6808317](https://github.com/politics-rewired/spoke/commit/6808317c023d7c64d8aaa25da2a9dd8ad3a053d5))
+* **trollbot:** make primary key compound ([#741](https://github.com/politics-rewired/spoke/issues/741)) ([99ef5ec](https://github.com/politics-rewired/spoke/commit/99ef5ecf36df6213cc589803fe6d39ecb6632ba8))
+* handle slack rate limits ([#740](https://github.com/politics-rewired/spoke/issues/740)) ([53c6d1c](https://github.com/politics-rewired/spoke/commit/53c6d1ceabc64a1f43b9de3ca13761b386c33e72))
+
+### [3.1.2](https://github.com/politics-rewired/spoke/compare/v3.1.1...v3.1.2) (2020-10-03)
+
+
+### Bug Fixes
+
+* **slack:** decrease sync rate to fix rate limiting ([#739](https://github.com/politics-rewired/spoke/issues/739)) ([4a57309](https://github.com/politics-rewired/spoke/commit/4a57309a423c63d2a213051512d65bd75ecaf6c8))
+
+### [3.1.1](https://github.com/politics-rewired/spoke/compare/v3.1.0...v3.1.1) (2020-10-02)
+
+
+### Bug Fixes
+
+* **edit-campaign:** compare to null rather than undefined ([b2843d0](https://github.com/politics-rewired/spoke/commit/b2843d067d4dfd467eaf651a1ca61e9945467767))
+
+## [3.1.0](https://github.com/politics-rewired/spoke/compare/v3.0.0...v3.1.0) (2020-10-02)
+
+
+### Features
+
+* **van:** add integration tag to campaign list ([9697881](https://github.com/politics-rewired/spoke/commit/96978819c5ddd59b07d7dc710e7a0c70a6024511))
+
+
+### Bug Fixes
+
+* **van:** disable csv source when using integration ([c8b50a2](https://github.com/politics-rewired/spoke/commit/c8b50a2cba63e33f139d340f1f4f7eee4f556408))
+* **van:** insert initial result message ([dc2b8f7](https://github.com/politics-rewired/spoke/commit/dc2b8f7f51324557412515b9128b6199aec27add))
+* **van:** show question in add mapping modal ([db5ec23](https://github.com/politics-rewired/spoke/commit/db5ec2323deb09f691491f76b3abaa5f55f0eae4))
+
+## [3.0.0](https://github.com/politics-rewired/spoke/compare/v2.11.1...v3.0.0) (2020-10-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* **van:** VAN integration is a major feature release
+
+### Features
+
+* **van:** two-way van sync ([#722](https://github.com/politics-rewired/spoke/issues/722)) ([c213636](https://github.com/politics-rewired/spoke/commit/c21363685d432e03ddb3e5c62cfccc57037d5ddd)), closes [#477](https://github.com/politics-rewired/spoke/issues/477)
+
+### [2.11.1](https://github.com/politics-rewired/spoke/compare/v2.11.0...v2.11.1) (2020-09-30)
+
+
+### Bug Fixes
+
+* fix index name ([c8a051c](https://github.com/politics-rewired/spoke/commit/c8a051c70825bb58f2b06962e337ff3423829373))
+
+## [2.11.0](https://github.com/politics-rewired/spoke/compare/v2.10.2...v2.11.0) (2020-09-28)
+
+
+### Features
+
+* sync slack channels as graphile job ([#736](https://github.com/politics-rewired/spoke/issues/736)) ([2c019e7](https://github.com/politics-rewired/spoke/commit/2c019e74ac63d356fbede4fa563df1da9781db14))
+
+### [2.10.2](https://github.com/politics-rewired/spoke/compare/v2.10.1...v2.10.2) (2020-09-25)
+
+
+### Bug Fixes
+
+* fix get_trollbot_matches function ([c6b83fd](https://github.com/politics-rewired/spoke/commit/c6b83fd9cf190172474687869244f38f43354fa0))
+
+### [2.10.1](https://github.com/politics-rewired/spoke/compare/v2.10.0...v2.10.1) (2020-09-25)
+
+
+### Bug Fixes
+
+* add tag to contacts on save ([#733](https://github.com/politics-rewired/spoke/issues/733)) ([03fc124](https://github.com/politics-rewired/spoke/commit/03fc1241997a2c6b8f1bb12c47f62782bd0c5ebd))
+* **assignment:** dont delete assignments, breaks opt out foreign keys ([#734](https://github.com/politics-rewired/spoke/issues/734)) ([999b404](https://github.com/politics-rewired/spoke/commit/999b40498ba3b0c73e32c363943c6f77bf0e6f86))
+* fix up/down migrations ([#728](https://github.com/politics-rewired/spoke/issues/728)) ([c16aabf](https://github.com/politics-rewired/spoke/commit/c16aabfe8800c8b7e18f8a05fe6e46a93c2efa33))
+* invoke scrollTo only if conversation has messages ([#732](https://github.com/politics-rewired/spoke/issues/732)) ([aea6597](https://github.com/politics-rewired/spoke/commit/aea659727e7f8d461b1039f05ec2001af1abbd7a))
+* **trollbot:** do not escape the token ([f77c8a9](https://github.com/politics-rewired/spoke/commit/f77c8a999e3b0486cb8f8051e9786649260e01f9))
+
 ## [2.10.0](https://github.com/politics-rewired/spoke/compare/v2.9.3...v2.10.0) (2020-09-13)
 
 
