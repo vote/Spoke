@@ -1,9 +1,11 @@
+import http from "http";
 import cron from "node-cron";
 import express from "express";
 import bodyParser from "body-parser";
 import cookieSession from "cookie-session";
 import basicAuth from "express-basic-auth";
 import passport from "@passport-next/passport";
+import { createTerminus } from "@godaddy/terminus";
 // import connectDatadog from "connect-datadog-graphql";
 import { config } from "../config";
 import logger from "../logger";
@@ -22,6 +24,7 @@ import {
   utilsRouter,
   previewRouter
 } from "./routes";
+import { r } from "./models";
 import { getWorker } from "./worker";
 import { errToObj } from "./utils";
 
@@ -153,12 +156,71 @@ app.use((err, req, res, next) => {
   return res.status(500).json({ error: true });
 });
 
-const port = DEV_APP_PORT || PORT;
-app.listen(port, () => {
-  logger.info(`Node app is running on port ${port}`);
+const server = http.createServer(app);
+
+// Ensure database is reachable
+const onHealthCheck = async () =>
+  r.knex.raw("select 1;").then(() => ({ status: "healthy" }));
+
+const waitMs = config.SHUTDOWN_GRACE_PERIOD;
+const beforeShutdown = () => {
+  logger.info(
+    `Received kill signal, waiting ${waitMs}ms before shutting down...`
+  );
+  return new Promise(resolve => {
+    setTimeout(() => {
+      logger.info("Done waiting");
+      resolve();
+    }, waitMs);
+  });
+};
+
+const teardownKnex = async () => {
+  logger.info("Starting cleanup of Postgres pools.");
+  const readerPromise = config.DATABASE_READER_URL
+    ? r.reader.destroy().then(() => logger.info("  - tore down Knex reader"))
+    : Promise.resolve();
+  return Promise.all([
+    r.knex.destroy().then(() => logger.info("  - tore down Knex writer")),
+    readerPromise
+  ]);
+};
+
+const teardownGraphile = async () =>
+  getWorker()
+    .then(worker => worker.stop())
+    .then(() => logger.info("  - tore down Graphile runner"));
+
+const onSignal = () => {
+  return Promise.all([teardownKnex(), teardownGraphile()]);
+};
+
+const onShutdown = () => {
+  logger.info("Cleanup finished, server is shutting down.");
+};
+
+createTerminus(server, {
+  signals: ["SIGTERM", "SIGINT"],
+  healthChecks: { "/health": onHealthCheck },
+  onSignal,
+  beforeShutdown,
+  onShutdown,
+  logger: (msg, err) => {
+    if (err) {
+      logger.error(`${msg}: `, err);
+    } else {
+      logger.info(msg);
+    }
+  }
 });
 
-getWorker();
+getWorker().then(() => {
+  // Heroku requires you to use process.env.PORT
+  const port = DEV_APP_PORT || PORT;
+  server.listen(port, () => {
+    logger.info(`Node app is running on port ${port}`);
+  });
+});
 
 // Used by lambda handler
 export default app;
